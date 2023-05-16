@@ -46,11 +46,12 @@ func MureaderMurecomHandler(c *gin.Context) {
 }
 
 func murecom4reader(req *MureaderMurecomRequest) (*MureaderMurecomResponse, error) {
-	logger := slog.With("func", "murecom4reader").With("req", req.LogValue())
+	logger := slog.With("func", "murecom4reader")
 
 	if req == nil {
 		return nil, errors.New("request is nil")
 	}
+	logger = logger.With("req", req.LogValue())
 
 	emotions := []Emotion{}
 
