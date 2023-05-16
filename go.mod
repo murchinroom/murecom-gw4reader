@@ -3,6 +3,7 @@ module murecom-gw4reader
 go 1.20
 
 require (
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.0
 	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
 )

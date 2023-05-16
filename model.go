@@ -12,9 +12,9 @@ import (
 //
 // from https://github.com/murchinroom/mureaderui/blob/main/lib/model.dart
 type MureaderMurecomRequest struct {
-	PrevPages    []string
-	CurrentPages []string
-	NextPages    []string
+	PrevPages    []string `json:"prevPages"`
+	CurrentPages []string `json:"currentPages"`
+	NextPages    []string `json:"nextPages"`
 }
 
 func (r MureaderMurecomRequest) LogValue() slog.Value {
@@ -43,8 +43,8 @@ func (r MureaderMurecomRequest) LogValue() slog.Value {
 //
 // from https://github.com/murchinroom/mureaderui/blob/main/lib/model.dart
 type MureaderMurecomResponse struct {
-	Music       *Music
-	TextEmotion Emotion // 分析的到的输入文本的情绪
+	Music       *Music  `json:"music"`       // 推荐的音乐
+	TextEmotion Emotion `json:"textEmotion"` // 分析的到的输入文本的情绪
 }
 
 func (r MureaderMurecomResponse) LogValue() slog.Value {
@@ -55,12 +55,12 @@ func (r MureaderMurecomResponse) LogValue() slog.Value {
 //
 // from https://github.com/murchinroom/mureaderui/blob/main/lib/model.dart
 type Music struct {
-	Title      string
-	Artist     string
-	CoverImage string
-	SourceUrl  string
+	Title      string `json:"title"`
+	Artist     string `json:"artist"`
+	CoverImage string `json:"coverImage"`
+	SourceUrl  string `json:"sourceUrl"`
 
-	TrackEmotion Emotion
+	TrackEmotion Emotion 
 }
 
 // MusicstoreTrack is the track from musicstore

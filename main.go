@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	"golang.org/x/exp/slog"
 )
 
@@ -28,6 +29,15 @@ func main() {
 	slog.Info("mureader murecom init.", "EmotextServer", EmotextServer, "MusicstoreMurecomServer", MusicstoreMurecomServer)
 
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"*"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	  }))
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"hello": "murecom-gw4reader"})
