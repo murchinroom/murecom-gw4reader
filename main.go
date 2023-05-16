@@ -5,18 +5,20 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/slog"
 )
 
 var (
 	emotextServer           = flag.String("emotext-server", EmotextServer, "emotext server url. Or set EMOTEXT_SERVER env var.")
 	musicstoreMurecomServer = flag.String("musicstore-murecom", MusicstoreMurecomServer, "musicstore murecom server url. Or set MUSICSTORE_MURECOM_SERVER env var.")
+	audioProxies            = flag.String("audio-proxies", "", "audio file store proxies. e.g. \"foo=http://127.0.0.1:8000/bar/audio/,another=...\". Or set AUDIO_PROXIES env var.")
 	listenAddr              = flag.String("listen-addr", "127.0.0.1:8007", "listen address")
 )
 
@@ -25,8 +27,17 @@ func main() {
 
 	EmotextServer = *emotextServer
 	MusicstoreMurecomServer = *musicstoreMurecomServer
+	if *audioProxies != "" {
+		SetupAudioProxies(*audioProxies)
+	} else {
+		*audioProxies = os.Getenv("AUDIO_PROXIES") // just for logging
+	}
 
-	slog.Info("mureader murecom init.", "EmotextServer", EmotextServer, "MusicstoreMurecomServer", MusicstoreMurecomServer)
+	slog.Info("mureader murecom init.",
+		"EmotextServer", EmotextServer,
+		"MusicstoreMurecomServer", MusicstoreMurecomServer,
+		"AudioProxies", audioProxies,
+	)
 
 	r := gin.Default()
 
@@ -37,12 +48,13 @@ func main() {
 		ExposeHeaders:    []string{"*"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
-	  }))
+	}))
 
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"hello": "murecom-gw4reader"})
 	})
 	r.POST("/murecom", MureaderMurecomHandler)
+	RregisterAudioProxyTo(r)
 
 	srv := &http.Server{
 		Addr:    *listenAddr,

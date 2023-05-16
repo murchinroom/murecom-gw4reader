@@ -41,6 +41,16 @@ func murecom(emotion Emotion) ([]*MusicstoreTrack, error) {
 		return nil, err
 	}
 
+	// audio proxy
+	for _, track := range respBody.Tracks {
+		for _, proxy := range proxies {
+			if newurl, ok := proxy.Hijack(track.AudioFileURL); ok {
+				logger.Info("murecom: audio proxy hijack.", "original", track.AudioFileURL, "proxied", newurl)
+				track.AudioFileURL = newurl
+			}
+		}
+	}
+
 	logger.Info("murecom: success.", "len(tracks)", len(respBody.Tracks))
 
 	return respBody.Tracks, nil
